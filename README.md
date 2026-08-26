@@ -6,7 +6,7 @@
 
 You already have Langfuse. The problem is everything _around_ it: each coding client speaks a different telemetry story, nothing stamps **which repo / which project** at the source, and you cannot tell from one place whether capture is actually flowing, only configured, or on a path Fusion never sees. Fusion is the local control plane that closes that gap.
 
-**What you get:** stand up Langfuse in Docker (or point at cloud), wire Claude Code and Codex through the OTLP bridge container, send BYOK Cursor and Hermes traffic through a local gateway, map a directory → project with a `.fusion` file, and see coverage + take govern actions from the CLI, MCP, or console. Fusion stays on this machine (`127.0.0.1`). Traces and cost stay in Langfuse — Fusion does not mirror a spend dashboard; it makes observability _happen_ and sends you there for the numbers.
+**What you get:** stand up Langfuse in Docker (or point at cloud), wire Claude Code and Codex through the OTLP bridge container, send BYOK Cursor and Hermes traffic through a local gateway, map a directory → project with a `.fusion` file, and see coverage + take govern actions from the CLI, MCP, or console. Fusion stays on this machine (`127.0.0.1`).
 
 **Today vs Fusion**
 
@@ -80,7 +80,7 @@ Work in the linked directory. The project is stamped there (`.fusion` + hook) or
 
 `fusion doctor` checks the pipeline and can write Langfuse keys. `fusion status` is the same list without calling Langfuse.
 
-### MCP (`fusion mcp`)
+### <img src="assets/mcp-logo.png" width="18" height="18" alt="MCP" align="center"> Fusion MCP
 
 Same tools in Cursor and Hermes. The agent turns on capture, links a folder, checks coverage — keys stay in Fusion config, not in the editor.
 
@@ -99,35 +99,31 @@ Restart the client, start a new session, ask Fusion (status, enable Hermes/Codex
 
 **Fusion MCP tools**
 
-| Tool                     | Function                                                       |
-| ------------------------ | -------------------------------------------------------------- |
-| `fusion_status`          | Health of daemon, gateway, bridge, targets                     |
-| `fusion_coverage`        | FLOWING / CONFIGURED / SUBSCRIPTION / BYPASSED / DOWN + routes |
-| `fusion_targets_list`    | Configured Langfuse targets, which is active                   |
-| `fusion_routes_list`     | Directory → project links                                      |
-| `fusion_target_test`     | Live ping to a target                                          |
-| `fusion_project_link`    | Bind a directory to a project                                  |
-| `fusion_target_add`      | Add a Langfuse target (keys validated)                         |
-| `fusion_target_set_keys` | Replace keys on a target                                       |
-| `fusion_set_active`      | Switch active target                                           |
-| `fusion_enable_source`   | Wire Claude Code, Codex, or Hermes                             |
+| Tool                     | Function                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| `fusion_status`          | Health of daemon, gateway, bridge, targets                                                       |
+| `fusion_coverage`        | FLOWING / CONFIGURED / SUBSCRIPTION / BYPASSED / DOWN + routes                                   |
+| `fusion_targets_list`    | Configured Langfuse targets, which is active                                                     |
+| `fusion_routes_list`     | Directory → project links                                                                        |
+| `fusion_target_test`     | Live ping to a target                                                                            |
+| `fusion_project_link`    | Bind a directory to a project                                                                    |
+| `fusion_target_add`      | Add a Langfuse target (keys validated)                                                           |
+| `fusion_target_set_keys` | Replace keys on a target                                                                         |
+| `fusion_set_active`      | Switch active target                                                                             |
+| `fusion_enable_source`   | Wire Claude Code, Codex, or Hermes                                                               |
 | `fusion_prices_sync`     | Register current model prices on the active Langfuse (fetches OpenRouter, falls back to bundled) |
 
 ### UI
 
 `fusion ui` — `http://127.0.0.1:4599`, one board: health, clients, routing, govern, and docs.
 
-**Visibility — what you can see**
+**What the console shows and does**
 
 - **Pipeline health** — daemon, gateway, bridge, Langfuse reachability (the same chain `fusion doctor` checks).
 - **What's connected** — each client as FLOWING / CONFIGURED / SUBSCRIPTION / BYPASSED / DOWN. Flowing means a recent tagged trace, not token volume. Subscription is Cursor’s usual path, not a failure.
 - **Routing map** — directory → project → target.
 - **Open Langfuse** — traces, metrics, and cost live there; Fusion only deep-links.
-
-**Actions — what you can do**
-
-- Add a Langfuse target (test keys, then save).
-- Link a directory to a project.
-- Enable Claude Code, Codex, or Hermes capture.
-- Sync model prices onto the active Langfuse so it can compute cost. Fusion fetches current prices from OpenRouter and falls back to bundled values only when the network is unavailable.
-
+- **Add a Langfuse target** — test keys, then save.
+- **Link a directory to a project** — so traces are tagged at the source.
+- **Enable Claude Code, Codex, or Hermes capture** — writes the client config Fusion needs.
+- **Sync model prices** — onto the active Langfuse so it can compute cost. Fusion fetches current prices from OpenRouter and falls back to bundled values only when the network is unavailable.
