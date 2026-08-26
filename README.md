@@ -40,8 +40,6 @@ Claude Code and Codex send OTLP to the bridge (`:4318`). Cursor and Hermes use t
 | **Cursor**      | Gateway `:4600` (BYOK). Subscription traffic **bypasses** — Fusion says so | Point the client at the gateway; not `enable`                  |
 | **Hermes**      | Gateway `:4600` (Fusion runs `hermes config set`)                          | `fusion enable hermes`                                         |
 
-CLI and Desktop share `~/.hermes/config.yaml`; restart after enable. OAuth-only (Nous/Copilot, no API key) is **bypassed**.
-
 ---
 
 ## Setup
@@ -80,9 +78,9 @@ Work in the linked directory. The project is stamped there (`.fusion` + hook) or
 
 `fusion doctor` checks the pipeline and can write Langfuse keys. `fusion status` is the same list without calling Langfuse.
 
-### <img src="assets/mcp-logo.png" width="18" height="18" alt="MCP" align="center"> Fusion MCP
+### Fusion MCP  <img src="assets/mcp-logo.png" width="14" height="14" alt="MCP" valign="middle">
 
-Same tools in Cursor and Hermes. The agent turns on capture, links a folder, checks coverage — keys stay in Fusion config, not in the editor.
+Same tools in Cursor and Hermes. The agent turns on capture, links a folder, checks coverage — keys stay in Fusion config,
 
 ```bash
 fusion connect cursor           # ~/.cursor/mcp.json
