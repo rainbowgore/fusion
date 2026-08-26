@@ -1,0 +1,28 @@
+{
+  "note": "Model catalog Fusion registers on a target so Langfuse computes cost. Prices are fetched live from OpenRouter when possible; bundled values are a fallback only. matchPattern is a case-insensitive regex against the observation model name.",
+  "models": [
+    { "modelName": "gpt-4o", "matchPattern": "(?i)^gpt-4o(?!-mini)", "sourceId": "openai/gpt-4o", "unit": "TOKENS", "inputPrice": 0.0000025, "outputPrice": 0.00001 },
+    { "modelName": "gpt-4o-mini", "matchPattern": "(?i)gpt-4o-mini", "sourceId": "openai/gpt-4o-mini", "unit": "TOKENS", "inputPrice": 0.00000015, "outputPrice": 0.0000006 },
+    { "modelName": "gpt-4.1", "matchPattern": "(?i)^gpt-4\\.1(?!-mini|-nano)", "sourceId": "openai/gpt-4.1", "unit": "TOKENS", "inputPrice": 0.000002, "outputPrice": 0.000008 },
+    { "modelName": "gpt-4.1-mini", "matchPattern": "(?i)gpt-4\\.1-mini", "sourceId": "openai/gpt-4.1-mini", "unit": "TOKENS", "inputPrice": 0.0000004, "outputPrice": 0.0000016 },
+    { "modelName": "gpt-4.1-nano", "matchPattern": "(?i)gpt-4\\.1-nano", "sourceId": "openai/gpt-4.1-nano", "unit": "TOKENS", "inputPrice": 0.0000001, "outputPrice": 0.0000004 },
+    { "modelName": "gpt-5", "matchPattern": "(?i)^gpt-5(?!-mini|-nano)", "sourceId": "openai/gpt-5", "unit": "TOKENS", "inputPrice": 0.00000125, "outputPrice": 0.00001 },
+    { "modelName": "gpt-5-mini", "matchPattern": "(?i)gpt-5-mini", "sourceId": "openai/gpt-5-mini", "unit": "TOKENS", "inputPrice": 0.00000025, "outputPrice": 0.000002 },
+    { "modelName": "gpt-5-nano", "matchPattern": "(?i)gpt-5-nano", "sourceId": "openai/gpt-5-nano", "unit": "TOKENS", "inputPrice": 0.00000005, "outputPrice": 0.0000004 },
+    { "modelName": "o1", "matchPattern": "(?i)^o1(?!-mini)", "sourceId": "openai/o1", "unit": "TOKENS", "inputPrice": 0.000015, "outputPrice": 0.00006 },
+    { "modelName": "o1-mini", "matchPattern": "(?i)o1-mini", "sourceId": "openai/o1-mini", "unit": "TOKENS", "inputPrice": 0.0000011, "outputPrice": 0.0000044 },
+    { "modelName": "o3", "matchPattern": "(?i)^o3(?!-mini)", "sourceId": "openai/o3", "unit": "TOKENS", "inputPrice": 0.000002, "outputPrice": 0.000008 },
+    { "modelName": "o3-mini", "matchPattern": "(?i)o3-mini", "sourceId": "openai/o3-mini", "unit": "TOKENS", "inputPrice": 0.0000011, "outputPrice": 0.0000044 },
+    { "modelName": "o4-mini", "matchPattern": "(?i)o4-mini", "sourceId": "openai/o4-mini", "unit": "TOKENS", "inputPrice": 0.0000011, "outputPrice": 0.0000044 },
+    { "modelName": "claude-opus-4", "matchPattern": "(?i)claude.*opus.*4", "sourceId": "anthropic/claude-opus-4", "unit": "TOKENS", "inputPrice": 0.000015, "outputPrice": 0.000075 },
+    { "modelName": "claude-sonnet-4", "matchPattern": "(?i)claude.*sonnet.*4", "sourceId": "anthropic/claude-sonnet-4", "unit": "TOKENS", "inputPrice": 0.000003, "outputPrice": 0.000015 },
+    { "modelName": "claude-haiku-4", "matchPattern": "(?i)claude.*haiku.*4", "sourceId": "anthropic/claude-haiku-4", "unit": "TOKENS", "inputPrice": 0.000001, "outputPrice": 0.000005 },
+    { "modelName": "claude-3-7-sonnet", "matchPattern": "(?i)claude.*3[.-]7.*sonnet", "sourceId": "anthropic/claude-3.7-sonnet", "unit": "TOKENS", "inputPrice": 0.000003, "outputPrice": 0.000015 },
+    { "modelName": "claude-3-5-haiku", "matchPattern": "(?i)claude.*3[.-]5.*haiku", "sourceId": "anthropic/claude-3.5-haiku", "unit": "TOKENS", "inputPrice": 0.0000008, "outputPrice": 0.000004 },
+    { "modelName": "claude-3-opus", "matchPattern": "(?i)claude.*3.*opus", "sourceId": "anthropic/claude-3-opus", "unit": "TOKENS", "inputPrice": 0.000015, "outputPrice": 0.000075 },
+    { "modelName": "gemini-2.5-pro", "matchPattern": "(?i)gemini.*2[.-]5.*pro", "sourceId": "google/gemini-2.5-pro-preview", "unit": "TOKENS", "inputPrice": 0.00000125, "outputPrice": 0.00001 },
+    { "modelName": "gemini-2.5-flash", "matchPattern": "(?i)gemini.*2[.-]5.*flash", "sourceId": "google/gemini-2.5-flash-preview", "unit": "TOKENS", "inputPrice": 0.0000003, "outputPrice": 0.0000025 },
+    { "modelName": "gemini-2.0-flash", "matchPattern": "(?i)gemini.*2[.-]0.*flash", "sourceId": "google/gemini-2.0-flash-001", "unit": "TOKENS", "inputPrice": 0.0000001, "outputPrice": 0.0000004 },
+    { "modelName": "gemini-1.5-pro", "matchPattern": "(?i)gemini.*1[.-]5.*pro", "sourceId": "google/gemini-1.5-pro-latest", "unit": "TOKENS", "inputPrice": 0.00000125, "outputPrice": 0.000005 }
+  ]
+}

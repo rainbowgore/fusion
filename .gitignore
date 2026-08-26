@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+dist/
+scratch/
+tmp/
+tests/
+*.log
+.env
+.env.*
+!.env.example
+
+# Working files
+session.md
+planning/
+.DS_Store
+screenshots/
+
+# Coding
+.cursor/
+.claude/
+
+# Build artifacts
+*.tgz
