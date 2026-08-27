@@ -19,7 +19,8 @@
     "fusion": "tsx src/cli.ts",
     "typecheck": "tsc --noEmit",
     "pretest": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts",
+    "test": "tsx --test tests/*.test.ts tests/functional/*.test.ts",
+    "test:functional": "tsx --test --test-timeout=120000 --test-concurrency=1 tests/functional/*.test.ts",
     "test:hermes": "tsx --test --test-timeout=180000 tests/hermes-user-path.test.ts",
     "start": "node dist/cli.js"
   },
