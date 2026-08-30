@@ -111,6 +111,8 @@ Restart the client, start a new session, ask Fusion (status, enable Hermes/Codex
 | `fusion_enable_source`   | Wire Claude Code, Codex, or Hermes                                                               |
 | `fusion_prices_sync`     | Register current model prices on the active Langfuse (fetches OpenRouter, falls back to bundled) |
 
+**Note:** Listing or governing Langfuse **org** projects needs an organization-scoped API key (Organization Settings → API Keys). That key exists on Langfuse **Team** and **Enterprise**, not Hobby. Capture, coverage, routes, and project keys work on every plan.
+
 ### UI
 
 `fusion ui` — `http://127.0.0.1:4599`, one board: health, clients, routing, govern, and docs.
