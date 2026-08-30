@@ -182,5 +182,26 @@ export function buildMcpServer(): McpServer {
     },
   );
 
+  attachFusionIconsToToolList(server);
   return server;
+}
+
+type ToolListHandler = (
+  request: unknown,
+  extra: unknown,
+) => Promise<{ tools?: Array<Record<string, unknown>> }>;
+
+/** MCP SDK omits `icons` on tools/list; Cursor/Hermes only paint a mark if it is on the tool. */
+function attachFusionIconsToToolList(server: McpServer): void {
+  const proto = server.server as unknown as { _requestHandlers: Map<string, ToolListHandler> };
+  const prev = proto._requestHandlers.get("tools/list");
+  if (!prev) return;
+  const icons = fusionMcpIcons();
+  proto._requestHandlers.set("tools/list", async (request, extra) => {
+    const result = await prev(request, extra);
+    return {
+      ...result,
+      tools: (result.tools ?? []).map((t) => ({ ...t, icons })),
+    };
+  });
 }

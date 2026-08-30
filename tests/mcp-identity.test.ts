@@ -34,6 +34,8 @@ test("Fusion MCP initialize advertises title, website, and icons", async () => {
     assert.ok(status);
     const meta = status._meta as { icons?: Array<{ src?: string }> } | undefined;
     assert.ok(meta?.icons && meta.icons.length > 0);
+    const icons = (status as { icons?: Array<{ src?: string }> }).icons;
+    assert.ok(icons && icons.length > 0);
   } finally {
     await client.close().catch(() => undefined);
     await server.close().catch(() => undefined);
