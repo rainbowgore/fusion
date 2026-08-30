@@ -25,7 +25,20 @@ export function orgKeysFromEnv(env: NodeJS.ProcessEnv = process.env): { orgPubli
 }
 
 export const MCP_CONNECT_NEEDS_ORG_KEY =
-  "fusion connect needs a Langfuse organization-scoped API key (Organization Settings → API Keys) so Fusion MCP can list and govern org projects on Cursor and Hermes. Set LANGFUSE_ORG_PUBLIC_KEY and LANGFUSE_ORG_SECRET_KEY, then re-run connect. Keys stay in Fusion config — they are not written into Cursor or Hermes MCP files.";
+  "fusion connect needs a Langfuse organization-scoped API key (Organization Settings → API Keys) so Fusion MCP can list and govern org projects on Cursor and Hermes. Run `fusion connect` in a terminal — you will be asked for the org public and secret key. Or set LANGFUSE_ORG_PUBLIC_KEY and LANGFUSE_ORG_SECRET_KEY. Keys stay in Fusion config — they are not written into Cursor or Hermes MCP files.";
+
+function orgKeyTarget(cfg: Config): Target | undefined {
+  return (
+    cfg.targets.find((t) => t.name === cfg.activeTarget) ??
+    cfg.targets.find((t) => t.kind === "cloud") ??
+    cfg.targets[0]
+  );
+}
+
+function applyOrgKeys(target: Target, keys: { orgPublicKey: string; orgSecretKey: string }): void {
+  target.orgPublicKey = keys.orgPublicKey;
+  target.orgSecretKey = keys.orgSecretKey;
+}
 
 /** Apply env org keys onto the active (or first cloud) target. Does not prompt. */
 export function ensureOrgScopedKeys(
@@ -35,18 +48,45 @@ export function ensureOrgScopedKeys(
 ): { ok: boolean; message: string } {
   const persist = opts.persist !== false;
   const fromEnv = orgKeysFromEnv(env);
-  const target =
-    cfg.targets.find((t) => t.name === cfg.activeTarget) ??
-    cfg.targets.find((t) => t.kind === "cloud") ??
-    cfg.targets[0];
+  const target = orgKeyTarget(cfg);
   if (!target) return { ok: false, message: MCP_CONNECT_NEEDS_ORG_KEY };
   if (!targetHasOrgKeys(target) && fromEnv.orgPublicKey && fromEnv.orgSecretKey) {
-    target.orgPublicKey = fromEnv.orgPublicKey;
-    target.orgSecretKey = fromEnv.orgSecretKey;
+    applyOrgKeys(target, fromEnv);
     if (persist) saveConfig(cfg);
   }
   if (targetHasOrgKeys(target)) return { ok: true, message: `Organization-scoped key is set on target "${target.name}".` };
   return { ok: false, message: MCP_CONNECT_NEEDS_ORG_KEY };
+}
+
+/** Prompt on a TTY for the org-scoped pair. Never used from Cursor chat. */
+export async function collectOrgScopedKeys(
+  partial: { orgPublicKey?: string; orgSecretKey?: string } = {},
+): Promise<{ orgPublicKey: string; orgSecretKey: string } | null> {
+  let orgPublicKey = partial.orgPublicKey?.trim() ?? "";
+  let orgSecretKey = partial.orgSecretKey?.trim() ?? "";
+  if ((!orgPublicKey || !orgSecretKey) && isInteractive()) {
+    console.log("Fusion MCP needs your Langfuse organization-scoped API key (Organization Settings → API Keys).");
+    console.log("It is saved in Fusion config only — not in Cursor or Hermes MCP files.");
+    if (!orgPublicKey) orgPublicKey = (await ask("Org public key: ")).trim();
+    if (!orgSecretKey) orgSecretKey = (await ask("Org secret key: ")).trim();
+  }
+  if (!orgPublicKey || !orgSecretKey) return null;
+  return { orgPublicKey, orgSecretKey };
+}
+
+/** Env first, then ask in the terminal, then persist. Used by `fusion connect`. */
+export async function ensureOrgScopedKeysForConnect(
+  cfg: Config,
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<{ ok: boolean; message: string }> {
+  const existing = ensureOrgScopedKeys(cfg, env);
+  if (existing.ok) return existing;
+  const typed = await collectOrgScopedKeys();
+  const target = orgKeyTarget(cfg);
+  if (!typed || !target) return { ok: false, message: MCP_CONNECT_NEEDS_ORG_KEY };
+  applyOrgKeys(target, typed);
+  saveConfig(cfg);
+  return { ok: true, message: `Organization-scoped key is set on target "${target.name}".` };
 }
 
 /** A target with no keys is not a Langfuse we can open or probe. */

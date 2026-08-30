@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { buildMcpServer } from "../mcp/server.js";
 import { initConfig, loadConfig } from "../config/load.js";
-import { ensureOrgScopedKeys } from "../config/credentials.js";
+import { ensureOrgScopedKeysForConnect } from "../config/credentials.js";
 import { ensureLangfuse } from "../langfuse/discover.js";
 import { filteredSpawnEnv } from "../platform/spawn-env.js";
 import { NPX_MCP_TIMEOUT_MS } from "../platform/limits.js";
@@ -69,7 +69,7 @@ export function registerMcpCommands(program: Command): void {
         if (created) {
           console.log("Created a starter Fusion config. Run `fusion init` (TTY) or `fusion init --sink …` to pick Docker / cloud / gateway-only.");
         }
-        const org = ensureOrgScopedKeys(loadConfig());
+        const org = await ensureOrgScopedKeysForConnect(loadConfig());
         if (!org.ok) {
           console.error(org.message);
           process.exit(1);
@@ -90,7 +90,7 @@ export function registerMcpCommands(program: Command): void {
         console.log("Created a starter Fusion config. Run `fusion init` (TTY) or `fusion init --sink …` to pick Docker / cloud / gateway-only.");
       }
       const cfg = loadConfig();
-      const org = ensureOrgScopedKeys(cfg);
+      const org = await ensureOrgScopedKeysForConnect(cfg);
       if (!org.ok) {
         console.error(org.message);
         process.exit(1);

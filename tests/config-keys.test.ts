@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ConfigSchema } from "../src/config/schema.ts";
 import { ensureOrgScopedKeys, MCP_CONNECT_NEEDS_ORG_KEY, needsLangfuseKeys } from "../src/config/credentials.ts";
+import { isInteractive } from "../src/platform/tty.ts";
+import { collectOrgScopedKeys } from "../src/config/credentials.ts";
 import {
   fusionMcpServers,
   mergeHermesFusionMcp,
@@ -58,6 +60,14 @@ test("ensureOrgScopedKeys is required for Cursor/Hermes MCP connect", () => {
   );
   assert.equal(yes.ok, true);
   assert.equal(fromEnv.targets[0].orgPublicKey, "pk-lf-org-a");
+});
+
+test("collectOrgScopedKeys returns null when not a TTY", async (t) => {
+  if (isInteractive()) {
+    t.skip("TTY would prompt for org keys");
+    return;
+  }
+  assert.equal(await collectOrgScopedKeys({}), null);
 });
 
 test("needsLangfuseKeys is false for gateway-only and true for cloud without keys", () => {
