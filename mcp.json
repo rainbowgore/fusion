@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fusion": {
+      "command": "fusion",
+      "args": ["mcp"]
+    }
+  }
+}
