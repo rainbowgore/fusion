@@ -1,4 +1,4 @@
-import type { Config, Target } from "../config/schema.js";
+import { TargetSchema, type Config, type Target } from "../config/schema.js";
 import { tryActiveTarget } from "../config/load.js";
 import { targetHasKeys } from "../config/credentials.js";
 import { LangfuseClient } from "../langfuse/client.js";
@@ -85,7 +85,7 @@ export async function buildCoverage(cfg: Config, opts?: { live?: boolean }): Pro
       if (!target) {
         const keyed = found.find((d) => d.hasKeys && d.healthy) ?? found.find((d) => d.hasKeys);
         if (keyed) {
-          target = {
+          target = TargetSchema.parse({
             name: "discovered",
             kind: keyed.kind,
             host: keyed.host,
@@ -93,7 +93,7 @@ export async function buildCoverage(cfg: Config, opts?: { live?: boolean }): Pro
             secretKey: keyed.secretKey,
             project: keyed.projects[0]?.name ?? "default",
             managed: false,
-          };
+          });
         }
       }
     } else {

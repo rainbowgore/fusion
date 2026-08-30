@@ -96,9 +96,17 @@ export class LangfuseClient {
     return (await res.json()) as ObservationsResponse;
   }
 
-  /** GET /api/public/projects — org projects (Cloud + recent self-host). */
+  /** GET /api/public/projects — the project this *project* key belongs to. */
   async listProjects(): Promise<{ id: string; name: string }[]> {
     const res = await this.request(`/api/public/projects?limit=100`, {}, 8000);
+    if (!res.ok) return [];
+    const body = (await res.json()) as { data?: Array<{ id?: string; name?: string }> };
+    return (body.data ?? []).filter((p) => p.id && p.name).map((p) => ({ id: p.id as string, name: p.name as string }));
+  }
+
+  /** GET /api/public/organizations/projects — all org projects (org-scoped key). */
+  async listOrganizationProjects(): Promise<{ id: string; name: string }[]> {
+    const res = await this.request(`/api/public/organizations/projects?limit=100`, {}, 8000);
     if (!res.ok) return [];
     const body = (await res.json()) as { data?: Array<{ id?: string; name?: string }> };
     return (body.data ?? []).filter((p) => p.id && p.name).map((p) => ({ id: p.id as string, name: p.name as string }));

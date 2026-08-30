@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { buildMcpServer } from "../mcp/server.js";
 import { initConfig, loadConfig } from "../config/load.js";
+import { ensureOrgScopedKeys } from "../config/credentials.js";
 import { ensureLangfuse } from "../langfuse/discover.js";
 import { filteredSpawnEnv } from "../platform/spawn-env.js";
 import { NPX_MCP_TIMEOUT_MS } from "../platform/limits.js";
@@ -68,6 +69,11 @@ export function registerMcpCommands(program: Command): void {
         if (created) {
           console.log("Created a starter Fusion config. Run `fusion init` (TTY) or `fusion init --sink …` to pick Docker / cloud / gateway-only.");
         }
+        const org = ensureOrgScopedKeys(loadConfig());
+        if (!org.ok) {
+          console.error(org.message);
+          process.exit(1);
+        }
         try {
           const backup = writeHermesFusionMcp();
           if (backup) console.log(`Backed up Hermes config → ${backup}`);
@@ -75,7 +81,7 @@ export function registerMcpCommands(program: Command): void {
           console.error(err instanceof McpConfigError ? err.message : String(err));
           process.exit(1);
         }
-        console.log(`Wrote Fusion MCP into ${hermesConfigPath()} (no Langfuse secrets). Quit Hermes Desktop, reopen, start a new session.`);
+        console.log(`Wrote Fusion MCP into ${hermesConfigPath()} (no Langfuse secrets). ${org.message} Quit Hermes Desktop, reopen, start a new session.`);
         return;
       }
 
@@ -84,6 +90,11 @@ export function registerMcpCommands(program: Command): void {
         console.log("Created a starter Fusion config. Run `fusion init` (TTY) or `fusion init --sink …` to pick Docker / cloud / gateway-only.");
       }
       const cfg = loadConfig();
+      const org = ensureOrgScopedKeys(cfg);
+      if (!org.ok) {
+        console.error(org.message);
+        process.exit(1);
+      }
       const { target } = await ensureLangfuse(cfg);
       if (!target) {
         console.error("No Langfuse found. Run `fusion init` first.");
@@ -112,6 +123,6 @@ export function registerMcpCommands(program: Command): void {
       const backup = writeMcpConfig(path, merged);
       if (backup) console.log(`Backed up ${path} → ${backup}`);
       console.log(`Installed fusion + langfuse MCP servers into ${path} (no Langfuse secret in that file).`);
-      console.log(`Langfuse host ${target.host}; keys stay in Fusion config. Restart the client.`);
+      console.log(`Langfuse host ${target.host}; ${org.message} Keys stay in Fusion config. Restart the client.`);
     });
 }

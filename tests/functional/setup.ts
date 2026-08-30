@@ -273,6 +273,8 @@ export async function createFunctionalEnv(opts: { skipDiscover?: boolean } = {})
           host: lf.host,
           publicKey: "pk-lf-test",
           secretKey: "sk-lf-test",
+          orgPublicKey: "pk-lf-org-test",
+          orgSecretKey: "sk-lf-org-test",
           project: "default",
           managed: false,
         },

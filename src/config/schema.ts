@@ -22,6 +22,13 @@ export const TargetSchema = z.object({
   publicKey: z.string().default(""),
   /** Langfuse project secret key (sk-lf-...). Prefer sourcing from 1Password. */
   secretKey: z.string().default(""),
+  /**
+   * Organization-scoped public key (Organization Settings → API Keys).
+   * Required for Fusion MCP on Cursor/Hermes to list and govern org projects.
+   */
+  orgPublicKey: z.string().default(""),
+  /** Organization-scoped secret key. Never written into editor MCP JSON. */
+  orgSecretKey: z.string().default(""),
   /** Langfuse project name/slug this target reports against. */
   project: z.string().default("default"),
   /**

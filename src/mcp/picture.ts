@@ -16,9 +16,10 @@ export function langfusePicture(cfg: Config): {
     host: string;
     project: string;
     managed: boolean;
-    hasKeys: boolean;
-    stub: boolean;
-    active: boolean;
+      hasKeys: boolean;
+      hasOrgKeys: boolean;
+      stub: boolean;
+      active: boolean;
   }>;
   directoryRoutes: number;
 } {
@@ -47,8 +48,14 @@ export function langfusePicture(cfg: Config): {
       "There is no Langfuse Cloud target with keys. Fusion cannot list cloud projects until Cloud host + keys are saved on a target.",
     );
   } else {
+    const orgReady = cloud.some((t) => Boolean(t.orgPublicKey?.trim() && t.orgSecretKey?.trim()));
     lines.push(
       `Cloud targets: ${cloud.map((t) => `${t.name} (${t.host}, project ${t.project})`).join("; ")}.`,
+    );
+    lines.push(
+      orgReady
+        ? "Organization-scoped key is set; Fusion MCP can list and govern org projects."
+        : "No organization-scoped key. fusion connect cursor|hermes needs LANGFUSE_ORG_PUBLIC_KEY and LANGFUSE_ORG_SECRET_KEY to answer org-wide questions.",
     );
   }
 
@@ -70,6 +77,7 @@ export function langfusePicture(cfg: Config): {
       project: t.project,
       managed: t.managed,
       hasKeys: !targetIsStub(t),
+      hasOrgKeys: Boolean(t.orgPublicKey?.trim() && t.orgSecretKey?.trim()),
       stub: targetIsStub(t),
       active: t.name === cfg.activeTarget,
     })),

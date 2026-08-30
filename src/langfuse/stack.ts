@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { type Config, type Target } from "../config/schema.js";
+import { TargetSchema, type Config, type Target } from "../config/schema.js";
 import { configPath } from "../config/paths.js";
 import { dataDir, langfuseStackDir } from "../platform/paths.js";
 
@@ -171,7 +171,7 @@ export function writeStack(webPort: number, force = false): StackInfo {
 }
 
 export function applyStackToConfig(cfg: Config, info: StackInfo, targetName = LOCAL_STACK_TARGET): Target {
-  const target: Target = {
+  const target: Target = TargetSchema.parse({
     name: targetName,
     kind: "local",
     host: info.host,
@@ -179,7 +179,7 @@ export function applyStackToConfig(cfg: Config, info: StackInfo, targetName = LO
     secretKey: info.secretKey,
     project: info.projectId,
     managed: true,
-  };
+  });
   const idx = cfg.targets.findIndex((t) => t.name === targetName);
   if (idx >= 0) cfg.targets[idx] = target;
   else cfg.targets.push(target);

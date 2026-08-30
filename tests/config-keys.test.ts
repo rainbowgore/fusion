@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ConfigSchema } from "../src/config/schema.ts";
-import { needsLangfuseKeys } from "../src/config/credentials.ts";
+import { ensureOrgScopedKeys, MCP_CONNECT_NEEDS_ORG_KEY, needsLangfuseKeys } from "../src/config/credentials.ts";
 import {
   fusionMcpServers,
   mergeHermesFusionMcp,
@@ -31,6 +31,33 @@ test("Zod ConfigSchema rejects colliding ports and unknown activeTarget", () => 
     targets: [{ name: "cloud", kind: "cloud", host: "https://cloud.langfuse.com" }],
   });
   assert.equal(dangling.success, false);
+});
+
+test("ensureOrgScopedKeys is required for Cursor/Hermes MCP connect", () => {
+  const missing = ConfigSchema.parse({
+    sink: "cloud",
+    activeTarget: "t",
+    targets: [{ name: "t", kind: "cloud", host: "https://cloud.langfuse.com", publicKey: "pk-lf-a", secretKey: "sk-lf-b" }],
+  });
+  const no = ensureOrgScopedKeys(missing, {});
+  assert.equal(no.ok, false);
+  assert.equal(no.message, MCP_CONNECT_NEEDS_ORG_KEY);
+
+  const fromEnv = ConfigSchema.parse({
+    sink: "cloud",
+    activeTarget: "t",
+    targets: [{ name: "t", kind: "cloud", host: "https://cloud.langfuse.com", publicKey: "pk-lf-a", secretKey: "sk-lf-b" }],
+  });
+  const yes = ensureOrgScopedKeys(
+    fromEnv,
+    {
+      LANGFUSE_ORG_PUBLIC_KEY: "pk-lf-org-a",
+      LANGFUSE_ORG_SECRET_KEY: "sk-lf-org-b",
+    },
+    { persist: false },
+  );
+  assert.equal(yes.ok, true);
+  assert.equal(fromEnv.targets[0].orgPublicKey, "pk-lf-org-a");
 });
 
 test("needsLangfuseKeys is false for gateway-only and true for cloud without keys", () => {

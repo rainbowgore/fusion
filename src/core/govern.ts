@@ -88,7 +88,7 @@ function originKey(host: string): string {
 }
 
 function asLocalTarget(name: string, extra: { host: string; publicKey: string; secretKey: string; project?: string }, managed = false): Target {
-  return {
+  return TargetSchema.parse({
     name,
     kind: "local",
     host: extra.host,
@@ -96,7 +96,7 @@ function asLocalTarget(name: string, extra: { host: string; publicKey: string; s
     secretKey: extra.secretKey,
     project: extra.project ?? "default",
     managed,
-  };
+  });
 }
 
 export async function govPricesSync(): Promise<{ ok: boolean; message: string }> {

@@ -10,6 +10,33 @@ import {
 } from "./setup.ts";
 import { verifyCursorMcpSurface, verifyHermesMcpSurface } from "./desktop.ts";
 
+test("functional connect: cursor refuses without org-scoped key", async () => {
+  const fx = await createFunctionalEnv();
+  try {
+    fx.writeBaseConfig({
+      targets: [
+        {
+          name: "mock",
+          kind: "cloud",
+          host: fx.lf.host,
+          publicKey: "pk-lf-test",
+          secretKey: "sk-lf-test",
+          orgPublicKey: "",
+          orgSecretKey: "",
+          project: "default",
+          managed: false,
+        },
+      ],
+    });
+    const r = await runCli(["connect", "cursor"], { ...fx.env, LANGFUSE_ORG_PUBLIC_KEY: "", LANGFUSE_ORG_SECRET_KEY: "" });
+    assert.notEqual(r.status, 0);
+    assert.match(`${r.stderr}\n${r.stdout}`, /organization-scoped API key/i);
+    recordAction("connect", "connect cursor refuses without org key");
+  } finally {
+    await fx.close();
+  }
+});
+
 test("functional connect: cursor merges mcpServers without secrets", async () => {
   const fx = await createFunctionalEnv();
   try {

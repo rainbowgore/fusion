@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ConfigSchema } from "../src/config/schema.ts";
+import { ConfigSchema, TargetSchema } from "../src/config/schema.ts";
 import { priceSyncCandidates } from "../src/core/govern.ts";
 
 test("priceSyncCandidates prefers active, then extras, without dupes", () => {
@@ -12,8 +12,8 @@ test("priceSyncCandidates prefers active, then extras, without dupes", () => {
     ],
   });
   const extras = [
-    { name: "local-stack", kind: "local" as const, host: "http://127.0.0.1:3005", publicKey: "pk-lf-b", secretKey: "sk-lf-b", project: "default", managed: true },
-    { name: "docker-init-1", kind: "local" as const, host: "http://127.0.0.1:3005/", publicKey: "pk-lf-docker", secretKey: "sk-lf-docker", project: "default", managed: false },
+    TargetSchema.parse({ name: "local-stack", kind: "local", host: "http://127.0.0.1:3005", publicKey: "pk-lf-b", secretKey: "sk-lf-b", project: "default", managed: true }),
+    TargetSchema.parse({ name: "docker-init-1", kind: "local", host: "http://127.0.0.1:3005/", publicKey: "pk-lf-docker", secretKey: "sk-lf-docker", project: "default", managed: false }),
   ];
   const names = priceSyncCandidates(cfg, extras).map((t) => t.name);
   assert.deepEqual(names, ["cloud", "local-3005", "docker-init-1"]);

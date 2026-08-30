@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import type { Config, Target } from "../config/schema.js";
+import { TargetSchema, type Config, type Target } from "../config/schema.js";
 import { loadConfig, saveConfig } from "../config/load.js";
 import { targetHasKeys } from "../config/credentials.js";
 import { cursorMcpPath, hermesConfigPath } from "../mcp/install.js";
@@ -362,13 +362,27 @@ export async function discoverLangfuse(cfg?: Config, opts: { scanListen?: boolea
     const timeout = kindForHost(host) === "cloud" ? CLOUD_HEALTH_PROBE_MS : LOCAL_HEALTH_PROBE_MS;
     const healthy = await probeHealth(host, timeout);
     let projects: Array<{ id: string; name: string }> = [];
-    if (keys.publicKey && keys.secretKey) {
-      try {
+    const org =
+      cfg?.targets.find((t) => {
+        try {
+          return new URL(t.host).origin === new URL(host).origin && t.orgPublicKey && t.orgSecretKey;
+        } catch {
+          return false;
+        }
+      }) ?? null;
+    try {
+      if (org?.orgPublicKey && org.orgSecretKey) {
+        projects = await new LangfuseClient({
+          host,
+          publicKey: org.orgPublicKey,
+          secretKey: org.orgSecretKey,
+        }).listOrganizationProjects();
+      } else if (keys.publicKey && keys.secretKey) {
         projects = await new LangfuseClient({ host, publicKey: keys.publicKey, secretKey: keys.secretKey }).listProjects();
-      } catch (err) {
-        warn("listProjects failed during discover", { host, error: String(err) });
-        projects = [];
       }
+    } catch (err) {
+      warn("listProjects failed during discover", { host, error: String(err) });
+      projects = [];
     }
     rows.push({
       host,
@@ -421,15 +435,17 @@ export function rememberDiscovered(cfg: Config, found: DiscoveredWithCreds[]): b
     }
     if (!d.hasKeys && !(d.healthy && d.kind === "local")) continue;
     const name = uniqueName(cfg, targetNameFor(d.host, d.kind));
-    cfg.targets.push({
-      name,
-      kind: d.kind,
-      host: d.host,
-      publicKey: d.publicKey,
-      secretKey: d.secretKey,
-      project: d.projects[0]?.name ?? "default",
-      managed: false,
-    });
+    cfg.targets.push(
+      TargetSchema.parse({
+        name,
+        kind: d.kind,
+        host: d.host,
+        publicKey: d.publicKey,
+        secretKey: d.secretKey,
+        project: d.projects[0]?.name ?? "default",
+        managed: false,
+      }),
+    );
     changed = true;
   }
   if (preferExistingLocalActive(cfg)) changed = true;
