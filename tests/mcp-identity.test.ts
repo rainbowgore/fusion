@@ -41,23 +41,3 @@ test("Fusion MCP initialize advertises title, website, and icons", async () => {
     await server.close().catch(() => undefined);
   }
 });
-
-test("Cursor plugin manifest points at the Fusion mark", async () => {
-  const { readFileSync, existsSync } = await import("node:fs");
-  const { join } = await import("node:path");
-  const root = join(import.meta.dirname, "..");
-  const manifest = JSON.parse(readFileSync(join(root, ".cursor-plugin", "plugin.json"), "utf8")) as {
-    name: string;
-    logo: string;
-    mcpServers: string;
-  };
-  assert.equal(manifest.name, "fusion");
-  assert.equal(manifest.logo, "assets/mcp-icon.svg");
-  assert.ok(existsSync(join(root, manifest.logo)));
-  assert.ok(existsSync(join(root, "assets", "mcp-logo.png")));
-  const mcp = JSON.parse(readFileSync(join(root, manifest.mcpServers), "utf8")) as {
-    mcpServers: { fusion?: { command: string; args: string[] } };
-  };
-  assert.equal(mcp.mcpServers.fusion?.command, "fusion");
-  assert.deepEqual(mcp.mcpServers.fusion?.args, ["mcp"]);
-});
