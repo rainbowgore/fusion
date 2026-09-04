@@ -5,8 +5,8 @@
   "author": {
     "name": "Fusion"
   },
-  "homepage": "https://github.com/rainbowgore/fusion",
-  "repository": "https://github.com/rainbowgore/fusion",
+  "homepage": "https://github.com/astraltrekkin/fusion",
+  "repository": "https://github.com/astraltrekkin/fusion",
   "license": "MIT",
   "keywords": ["mcp", "langfuse", "observability", "fusion"],
   "logo": "assets/mcp-icon.svg",

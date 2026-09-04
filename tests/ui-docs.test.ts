@@ -57,7 +57,7 @@ test("console HTML is the board layout with docs and logos", () => {
   assert.match(html, /id="lf-sep"/);
   assert.match(html, /class="head-sep"/);
   assert.match(html, /class="gh"/);
-  assert.match(html, /github.com\/rainbowgore\/fusion/);
+  assert.match(html, /github.com\/astraltrekkin\/fusion/);
   assert.match(html, /id="docs"/);
   assert.match(html, /__FUSION_DOCS__/);
   for (const id of docsPageIds()) {

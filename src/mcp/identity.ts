@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const FUSION_MCP_WEBSITE = "https://github.com/rainbowgore/fusion";
+export const FUSION_MCP_WEBSITE = "https://github.com/astraltrekkin/fusion";
 export const FUSION_MCP_TITLE = "Fusion";
 export const FUSION_MCP_DESCRIPTION = "Govern capture and routing into Langfuse from this machine.";
 
@@ -33,7 +33,7 @@ export function fusionMcpIcons(): FusionMcpIcon[] {
   if (light) icons.push({ src: light, mimeType: "image/svg+xml", sizes: ["any"], theme: "light" });
   if (png) icons.push({ src: png, mimeType: "image/png", sizes: ["512x512"] });
   icons.push({
-    src: "https://raw.githubusercontent.com/rainbowgore/fusion/main/assets/mcp-icon.svg",
+    src: "https://raw.githubusercontent.com/astraltrekkin/fusion/main/assets/mcp-icon.svg",
     mimeType: "image/svg+xml",
     sizes: ["any"],
     theme: "dark",

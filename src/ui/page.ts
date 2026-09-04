@@ -228,7 +228,7 @@ ${governScript}
           <span id="lf-sep" class="head-sep" hidden>|</span>
           <a href="#docs/overview" id="docs-link">docs</a>
           <span class="head-sep">|</span>
-          <a class="gh" href="https://github.com/rainbowgore/fusion" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">${GITHUB_MARK_SVG}</a>
+          <a class="gh" href="https://github.com/astraltrekkin/fusion" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">${GITHUB_MARK_SVG}</a>
         </div>
       </div>
     </div>

@@ -78,7 +78,7 @@ Work in the linked directory. The project is stamped there (`.fusion` + hook) or
 
 `fusion doctor` checks the pipeline and can write Langfuse keys. `fusion status` is the same list without calling Langfuse.
 
-### Fusion MCP <img src="https://raw.githubusercontent.com/rainbowgore/fusion/main/assets/mcp-logo.png" width="14" height="14" alt="MCP" valign="middle">
+### Fusion MCP <img src="https://raw.githubusercontent.com/astraltrekkin/fusion/main/assets/mcp-logo.png" width="14" height="14" alt="MCP" valign="middle">
 
 Same tools in Cursor and Hermes. The agent turns on capture, links a folder, checks coverage — keys stay in Fusion config,
 
